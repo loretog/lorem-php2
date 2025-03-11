@@ -1,1 +1,1 @@
-# loreto-php2
+# lorem-php2
