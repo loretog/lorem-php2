@@ -7,11 +7,11 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
         <div class="container">
-            <a class="navbar-brand" href="/">Lorem PHP</a>
+            <a class="navbar-brand" href="<?= SITE_URL ?>"><?= SITE_NAME ?></a>
             <div class="navbar-nav">
-                <a class="nav-link" href="/">Home</a>
-                <a class="nav-link" href="/about">About</a>
-                <a class="nav-link" href="/contact">Contact</a>
+                <a class="nav-link" href="<?= SITE_URL ?>/">Home</a>
+                <a class="nav-link" href="<?= SITE_URL ?>/about">About</a>
+                <a class="nav-link" href="<?= SITE_URL ?>/contact">Contact</a>
             </div>
         </div>
     </nav>

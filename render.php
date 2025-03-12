@@ -1,5 +1,6 @@
 <?php
 
+require_once 'lib/Database.php';
 require_once 'lib/Route.php';
 
 // Use static Route class methods
@@ -17,7 +18,6 @@ if(isset($route_parts[ 0 ]) && !empty($route_parts[ 0 ])) {
 } else {
     include 'pages/home.php';
 }
-
 $content = ob_get_clean();
 
 include 'layouts/main.php';
