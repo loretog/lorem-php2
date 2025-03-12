@@ -1,8 +1,10 @@
 <?php
 
-$request_url = filter_input(INPUT_GET, 'url', FILTER_SANITIZE_URL) ?? '/';
-$route = rtrim($request_url, '/');
-$route_parts = explode('/', $route);
+require_once 'lib/Route.php';
+
+// Use static Route class methods
+$route = Route::current();
+$route_parts = Route::parts();
 
 ob_start();
 if(isset($route_parts[ 0 ]) && !empty($route_parts[ 0 ])) {
