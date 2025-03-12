@@ -2,6 +2,7 @@
 
 require_once 'lib/Database.php';
 require_once 'lib/Route.php';
+require_once 'lib/Auth.php';
 
 // Use static Route class methods
 $route = Route::current();

@@ -12,6 +12,11 @@
                 <a class="nav-link" href="<?= SITE_URL ?>/">Home</a>
                 <a class="nav-link" href="<?= SITE_URL ?>/about">About</a>
                 <a class="nav-link" href="<?= SITE_URL ?>/contact">Contact</a>
+                <?php if( Auth::get()->isLoggedIn() ) : ?>
+                <a class="nav-link" href="<?= SITE_URL ?>/logout">Logout</a>                
+                <?php else: ?>
+                    <a class="nav-link" href="<?= SITE_URL ?>/login">Login</a>
+                <?php endif; ?>
             </div>
         </div>
     </nav>
