@@ -126,10 +126,11 @@ try {
     if (!empty($errors)) {
         echo "<div class='alert alert-danger mt-3'>".implode('<br>', $errors)."</div>";
     }
-
-    echo "<form method='post' action='?confirm=yes' class='mt-3'>
+    ob_start();
+?>
+    <form method='post' action='?confirm=yes' class='mt-3'>
         <h3>Create Admin Account</h3>
-        " . (!empty($errors) ? "<div class='alert alert-danger'>" . implode('<br>', $errors) . "</div>" : '') . "
+        <?php echo (!empty($errors) ? "<div class='alert alert-danger'>" . implode('<br>', $errors) . "</div>" : ''); ?>
         <div class='mb-3'>
             <label for='username' class='form-label'>Username</label>
             <input type='text' class='form-control' id='username' name='username' required>
@@ -139,7 +140,9 @@ try {
             <input type='password' class='form-control' id='password' name='password' required>
         </div>
         <button type='submit' class='btn btn-primary' name='create_admin'>Create Admin Account</button>
-    </form>";
+    </form>
+    <?php
+    echo ob_get_clean();
 } catch (PDOException $e) {
     die("<h1>Setup Failed</h1>\n<p>Error: " . $e->getMessage() . "</p>");
 }

@@ -3,15 +3,24 @@
 class Database
 {
     private static $instance = null;
+    private static $config = [];
 
     public static function get()
     {
         if (self::$instance === null) {
             try {
+                $config = !empty(self::$config) ? self::$config : [
+                    'driver' => DB_DRIVER,
+                    'host' => DB_HOST,
+                    'dbname' => DB_NAME,
+                    'user' => DB_USER,
+                    'pass' => DB_PASS
+                ];
+
                 self::$instance = new PDO(
-                    DB_DRIVER . ':host='.DB_HOST.';dbname='.DB_NAME,
-                    DB_USER,
-                    DB_PASS,
+                    $config['driver'] . ':host='.$config['host'].';dbname='.$config['dbname'],
+                    $config['user'],
+                    $config['pass'],
                     [
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
@@ -151,6 +160,13 @@ class Database
                 die('Delete error: ' . $e->getMessage());
             }
             die('Error deleting records');
+        }
+    }
+
+    public static function resetConnection(array $config = null) {
+        self::$instance = null;
+        if ($config !== null) {
+            self::$config = $config;
         }
     }
 }
