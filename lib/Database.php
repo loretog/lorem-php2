@@ -141,7 +141,7 @@ class Database
                     $params[":$key"] = $value;
                 }
                 $sql .= ' WHERE ' . implode(' AND ', $where);
-            }
+            }            
 
             $stmt = self::get()->prepare($sql);
             $stmt->execute($params);

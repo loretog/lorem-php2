@@ -1,23 +1,39 @@
 <?php
 
-require_once 'lib/Database.php';
-require_once 'lib/Route.php';
-require_once 'lib/Auth.php';
-
 // Use static Route class methods
 $route = Route::current();
 $route_parts = Route::parts();
 
-ob_start();
-if(isset($route_parts[ 0 ]) && !empty($route_parts[ 0 ])) {
-    if( file_exists( 'pages/' . $route_parts[ 0 ] . '.php' ) ) {
-        include "pages/{$route_parts[0]}.php";
-    } else {
-        http_response_code(404);
-        include 'pages/404.php';
-    }
+global $PAGE_PERMISSIONS;
+global $DEFAULT_PERMISSIONS;
+
+if (isset($PAGE_PERMISSIONS[$route])) {
+    Auth::get()->checkAccess($PAGE_PERMISSIONS[$route]);
 } else {
+    // Check if route without trailing slash exists
+    $base_route = preg_replace('/\/[^\/]+$/', '', $route);
+    $base_route = $base_route === '' ? '/' : $base_route;
+    
+    if (isset($PAGE_PERMISSIONS[$base_route])) {
+        Auth::get()->checkAccess($PAGE_PERMISSIONS[$base_route]);
+    } else {
+        Auth::get()->checkAccess($DEFAULT_PERMISSIONS);
+    }
+}
+
+ob_start();
+$template_path = 'pages/' . implode('/', array_filter(array_slice($route_parts, 1))) . '.php';
+
+error_log('Route parts: ' . print_r($route_parts, true));
+error_log('Template path: ' . $template_path);
+
+if(!empty($route_parts[1]) && file_exists($template_path)) {
+    include $template_path;
+} else if(file_exists('pages/home.php')) {
     include 'pages/home.php';
+} else {
+    http_response_code(404);
+    include 'pages/404.php';
 }
 $content = ob_get_clean();
 

@@ -1,10 +1,6 @@
 <?php
 
 
-if (Auth::get()->isLoggedIn()) {
-    header('Location: ' . SITE_URL);
-    exit();
-}
 
 $error = null;
 

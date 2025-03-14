@@ -8,8 +8,9 @@ class Route
 
     public static function init()
     {
-        $url = filter_input(INPUT_GET, 'url', FILTER_SANITIZE_URL) ?? '/';
-        self::$current_route = rtrim($url, '/');
+        $url = trim(filter_input(INPUT_GET, 'url', FILTER_SANITIZE_URL) ?? '', '/');
+        $url = $url === '' ? '/' : '/' . $url;
+        self::$current_route = $url;
         self::$route_parts = explode('/', self::$current_route);
         
         // Parse key-value pairs from sequential segments
