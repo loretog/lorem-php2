@@ -119,8 +119,12 @@ try {
                 'created' => date('Y-m-d H:i:s')
             ]);
             echo "<div class='alert alert-success mt-3'>Admin account created successfully!</div>";
-            exit;
+            unset($errors);  // Clear errors after success
         }
+    }
+
+    if (!empty($errors)) {
+        echo "<div class='alert alert-danger mt-3'>".implode('<br>', $errors)."</div>";
     }
 
     echo "<form method='post' action='?confirm=yes' class='mt-3'>
