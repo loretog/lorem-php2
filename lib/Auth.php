@@ -131,7 +131,7 @@ class Auth
             exit();
         }
 
-        if (!$this->isLoggedIn() || !$this->isRoleAllowed($userRole, $allowedRoles)) {
+        if (!$this->isLoggedIn()) {
             $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             $basePath = parse_url(SITE_URL, PHP_URL_PATH);
             $normalizedPath = preg_replace('#^'.preg_quote($basePath, '#').'#', '', $currentPath) ?: '/';
@@ -140,6 +140,10 @@ class Auth
                 header('Location: ' . SITE_URL . '/login');
                 exit();
             }
+        } elseif (!$this->isRoleAllowed($userRole, $allowedRoles)) {
+            http_response_code(403);
+            include __DIR__ . '/../pages/403.php';
+            exit();
         }
     }
 

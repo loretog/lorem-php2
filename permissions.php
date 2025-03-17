@@ -22,6 +22,7 @@ $PAGE_PERMISSIONS = [
     '/profile' => ['student', 'tech', 'admin', 'personnel'],
     '/sites' => ['tech', 'admin'],
     '/about' => ['*'],
+    '/dashboard' => [ 'buko' ],
 ];
 
 // Default permissions for unspecified pages
