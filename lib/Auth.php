@@ -143,6 +143,7 @@ class Auth
         } elseif (!$this->isRoleAllowed($userRole, $allowedRoles)) {
             http_response_code(403);
             include __DIR__ . '/../pages/403.php';
+            //header('Location: ' . SITE_URL . '/403');
             exit();
         }
     }

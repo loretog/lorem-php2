@@ -39,9 +39,12 @@ $template_path = 'pages/' . implode('/', array_filter(array_slice($route_parts, 
 error_log('Route parts: ' . print_r($route_parts, true));
 error_log('Template path: ' . $template_path);
 
-if(!empty($route_parts[1]) && file_exists($template_path)) {
+if (file_exists($template_path) && !empty($route_parts[1])) {
     include $template_path;
-} else if(file_exists('pages/home.php')) {
+} else if ($route !== '/' && !file_exists($template_path)) {
+    http_response_code(404);
+    include 'pages/404.php';
+} else if (file_exists('pages/home.php')) {
     include 'pages/home.php';
 } else {
     http_response_code(404);
