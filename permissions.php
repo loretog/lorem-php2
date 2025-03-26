@@ -44,6 +44,7 @@ $PAGE_PERMISSIONS = [
     '/home' => ['*'],
     '/login' => ['*'],
     '/logout' => ['*'],
+    '/wawa' => ['staff'],
     /* '/admin' => ['admin'],
     '/tech' => ['tech', 'admin'],
     '/profile' => ['student', 'tech', 'admin', 'personnel'],

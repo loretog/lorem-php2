@@ -2,70 +2,29 @@
 require_once __DIR__.'/config.php';
 require_once __DIR__.'/lib/Database.php';
 
-// New database configuration form
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['db_settings'])) {
-    echo '<!DOCTYPE html>
-    <html>
-    <head>
-        <title>Database Setup</title>
-        <style>
-            .container { max-width: 500px; margin: 50px auto; padding: 20px; }
-            .form-group { margin-bottom: 15px; }
-            label { display: block; margin-bottom: 5px; }
-            input { width: 100%; padding: 8px; }
-            button { background: #007bff; color: white; border: none; padding: 10px 20px; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Database Configuration</h1>
-            <form method="POST">
-                <div class="form-group">
-                    <label>Database Name:</label>
-                    <input type="text" name="db_name" required>
-                </div>
-                <div class="form-group">
-                    <label>Database Username:</label>
-                    <input type="text" name="db_user" required>
-                </div>
-                <div class="form-group">
-                    <label>Database Password:</label>
-                    <input type="password" name="db_pass">
-                </div>
-                <button type="submit" name="db_settings">Configure Database</button>
-            </form>
-        </div>
-    </body>
-    </html>';
-    exit;
-}
-
 if (!defined('DEBUG') || !DEBUG) {
     die('Setup script disabled in production environment');
 }
 
-if (!isset($_GET['confirm']) || $_GET['confirm'] !== 'yes') {
-    die("<h1>Database Setup</h1>
-        <p>This script will DESTROY and RECREATE your database tables!</p>
-        <p>Add ?confirm=yes to the URL to execute</p>");
+if (!isset($_POST['confirm']) || $_POST['confirm'] !== 'yes') {
+    die("<h1>Database Setup</h1>\n        <p>This script will DESTROY and RECREATE your database tables!</p>\n        <form method='POST'>\n            <input type='hidden' name='confirm' value='yes'>\n            <button type='submit'>Confirm Database Reset</button>\n        </form>");
 }
 
 try {
-    // Create database if not exists
-    $db = new PDO("mysql:host=localhost", $_POST['db_user'], $_POST['db_pass']);
-    $db->exec("CREATE DATABASE IF NOT EXISTS `".$_POST['db_name']."` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
+    $db = new PDO("mysql:host=" . DB_HOST, DB_USER, DB_PASS);
+    $db->exec("CREATE DATABASE IF NOT EXISTS `" . DB_NAME . "` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
 
-    // Reconnect with selected database
     Database::resetConnection([
-        'host' => 'localhost',
-        'dbname' => $_POST['db_name'],
-        'user' => $_POST['db_user'],
-        'pass' => $_POST['db_pass']
+        'driver' => DB_DRIVER,
+        'host' => DB_HOST,
+        'dbname' => DB_NAME,
+        'user' => DB_USER,
+        'pass' => DB_PASS
     ]);
 
     $stmt = Database::get()->query("SELECT TABLE_NAME 
         FROM information_schema.tables 
-        WHERE table_schema = '".$_POST['db_name']."'");
+        WHERE table_schema = '".DB_NAME."'");
     $existingTables = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (PDOException $e) {
     die("Error checking existing tables: ".$e->getMessage());
@@ -90,45 +49,11 @@ try {
     echo "<h1>Database Setup Complete</h1>";
     echo "<p>Successfully executed " . count($queries) . " SQL statements</p>";
 
-    // Handle admin account creation separately
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_admin'])) {
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $errors = [];
-
-        if (empty($username)) {
-            $errors[] = 'Username is required';
-        }
-        if (empty($password)) {
-            $errors[] = 'Password is required';
-        }
-
-        if (empty($errors)) {
-            $existingUser = Database::fetch('users', ['username' => $username]);
-            if ($existingUser) {
-                $errors[] = 'Username already exists';
-            }
-        }
-
-        if (empty($errors)) {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            Database::insert('users', [
-                'username' => $username,
-                'password' => $hashedPassword,
-                'role' => 'admin',
-                'created' => date('Y-m-d H:i:s')
-            ]);
-            echo "<div class='alert alert-success mt-3'>Admin account created successfully!</div>";
-            unset($errors);  // Clear errors after success
-        }
-    }
-
-    if (!empty($errors)) {
-        echo "<div class='alert alert-danger mt-3'>".implode('<br>', $errors)."</div>";
-    }
+    // Always show user creation form
     ob_start();
 ?>
-    <form method='post' action='?confirm=yes' class='mt-3'>
+    <form method='post' action='' class='mt-3'>
+        <input type='hidden' name='confirm' value='yes'>
         <h3>Create Admin Account</h3>
         <?php echo (!empty($errors) ? "<div class='alert alert-danger'>" . implode('<br>', $errors) . "</div>" : ''); ?>
         <div class='mb-3'>
@@ -136,13 +61,42 @@ try {
             <input type='text' class='form-control' id='username' name='username' required>
         </div>
         <div class='mb-3'>
+            <label for='role' class='form-label'>Role</label>
+            <select class='form-control' id='role' name='role' required>
+                <?php foreach(array_diff($VALID_ROLES, ['logged_in']) as $role): ?>
+                    <option value="<?= htmlspecialchars($role) ?>"><?= htmlspecialchars($role) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class='mb-3'>
             <label for='password' class='form-label'>Password</label>
             <input type='password' class='form-control' id='password' name='password' required>
         </div>
-        <button type='submit' class='btn btn-primary' name='create_admin'>Create Admin Account</button>
+        <button type='submit' class='btn btn-primary' name='create_admin'>Create User Account</button>
     </form>
     <?php
     echo ob_get_clean();
 } catch (PDOException $e) {
     die("<h1>Setup Failed</h1>\n<p>Error: " . $e->getMessage() . "</p>");
+}
+
+$username = trim($_POST['username'] ?? '');
+$role = $_POST['role'] ?? '';
+$password = $_POST['password'] ?? '';
+
+if (empty($username) || empty($password)) {
+    $errors[] = 'Username and password are required';
+}
+
+if (!in_array($role, $VALID_ROLES)) {
+    $errors[] = 'Invalid role selected';
+}
+
+if (empty($errors)) {
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    
+    Database::get()->prepare("INSERT INTO users (username, role, password) VALUES (?, ?, ?)")
+        ->execute([$username, $role, $passwordHash]);
+    
+    echo '<div class="alert alert-success">User account created successfully</div>';
 }

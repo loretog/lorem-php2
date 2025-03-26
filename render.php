@@ -36,19 +36,19 @@ ob_start();
 // Build template path from route components (exclude first empty element)
 $template_path = 'pages/' . implode('/', array_filter(array_slice($route_parts, 1))) . '.php';
 
-error_log('Route parts: ' . print_r($route_parts, true));
-error_log('Template path: ' . $template_path);
+//error_log('Route parts: ' . print_r($route_parts, true));
+//error_log('Template path: ' . $template_path);
 
 if (file_exists($template_path) && !empty($route_parts[1])) {
     include $template_path;
 } else if ($route !== '/' && !file_exists($template_path)) {
     http_response_code(404);
-    include 'pages/404.php';
-} else if (file_exists('pages/home.php')) {
-    include 'pages/home.php';
+    include PAGE_404;
+} else if (file_exists(PAGE_DEFAULT)) {
+    include PAGE_DEFAULT;
 } else {
     http_response_code(404);
-    include 'pages/404.php';
+    include PAGE_404;
 }
 $content = ob_get_clean();
 
