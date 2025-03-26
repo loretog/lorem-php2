@@ -15,12 +15,7 @@
  */
 $ROLE_HIERARCHY = [
     'logged_in' => [],
-    // Removed duplicate entry
-    'admin' => ['tech', 'logged_in'],
-    'tech' => ['faculty', 'logged_in'],
-    'faculty' => ['student', 'personnel', 'logged_in'],
-    'student' => ['logged_in'],
-    'personnel' => ['logged_in'],
+    'admin' => ['user', 'logged_in'],
     'user' => ['logged_in']
 ];
 
@@ -38,19 +33,13 @@ $ROLE_HIERARCHY = [
  * 1. Routes not listed here will use $DEFAULT_PERMISSIONS
  * 2. Role inheritance is automatically applied
  * 3. Order of declaration does not affect priority
+
  */
 $PAGE_PERMISSIONS = [
     '/' => ['*'],
     '/home' => ['*'],
     '/login' => ['*'],
-    '/logout' => ['*'],
-    '/wawa' => ['staff'],
-    /* '/admin' => ['admin'],
-    '/tech' => ['tech', 'admin'],
-    '/profile' => ['student', 'tech', 'admin', 'personnel'],
-    '/sites' => ['tech', 'admin'],
-    '/about' => ['*'],
-    '/dashboard' => [ 'buko' ], */
+    '/logout' => ['*'],    
 ];
 
 /**

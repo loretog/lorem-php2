@@ -36,8 +36,8 @@ ob_start();
 // Build template path from route components (exclude first empty element)
 $template_path = 'pages/' . implode('/', array_filter(array_slice($route_parts, 1))) . '.php';
 
-//error_log('Route parts: ' . print_r($route_parts, true));
-//error_log('Template path: ' . $template_path);
+error_log('Route parts: ' . print_r($route_parts, true));
+error_log('Template path: ' . $template_path);
 
 if (file_exists($template_path) && !empty($route_parts[1])) {
     include $template_path;

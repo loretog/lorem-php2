@@ -75,9 +75,14 @@ class Auth
         if ($this->isLoggedIn() && isset($_SESSION['last_activity'])) {
             if (time() - $_SESSION['last_activity'] > $maxLifetime) {
                 $this->logout();
-                if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) !== parse_url(SITE_URL.'/login', PHP_URL_PATH)) {
-                    header('Location: ' . SITE_URL . '/login');
-                    exit();
+                $normalizedPath = $this->normalizePath($_SERVER['REQUEST_URI']);
+                $normalizedLoginPath = $this->normalizePath(SITE_URL.'/login');
+                if ($normalizedPath !== $normalizedLoginPath) {
+                    // Only redirect if not already on login page
+                    if ($normalizedPath !== $normalizedLoginPath) {
+                        header('Location: ' . SITE_URL . '/login');
+                        exit();
+                    }
                 }
             }
         }
@@ -85,13 +90,18 @@ class Auth
 
         if ($this->isLoggedIn() && !$this->isSessionValid()) {
             $this->logout();
-            $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            $basePath = parse_url(SITE_URL, PHP_URL_PATH);
-            $normalizedPath = preg_replace('#^'.preg_quote($basePath, '#').'#', '', $currentPath) ?: '/';
+            $normalizedPath = $this->normalizePath($_SERVER['REQUEST_URI']);
 
-            if ($normalizedPath !== '/login') {
+            if ($this->isLoggedIn() && $normalizedPath === 'login') {
+                header('Location: ' . SITE_URL . '/dashboard');
+                exit;
+            }
+
+            if ($normalizedPath !== $normalizedLoginPath) {
                 header('Location: ' . SITE_URL . '/login');
                 exit();
+            } else {
+                return; // Avoid redirect loop when already on login page
             }
         }
     }
@@ -99,6 +109,13 @@ class Auth
     private function isSessionValid(): bool
     {
         return $_SESSION['user_agent'] === ($_SERVER['HTTP_USER_AGENT'] ?? '');
+    }
+
+    private function normalizePath($url)
+    {
+        $basePath = parse_url(SITE_URL, PHP_URL_PATH);
+        $path = parse_url($url, PHP_URL_PATH);
+        return trim(preg_replace('#^'.preg_quote($basePath, '#').'#', '', $path), '/') ?: '/';
     }
 
     public function checkAccess($allowedRoles = ['logged_in'])
@@ -132,13 +149,23 @@ class Auth
         }
 
         if (!$this->isLoggedIn()) {
-            $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            $basePath = parse_url(SITE_URL, PHP_URL_PATH);
-            $normalizedPath = preg_replace('#^'.preg_quote($basePath, '#').'#', '', $currentPath) ?: '/';
+            $normalizedPath = $this->normalizePath($_SERVER['REQUEST_URI']);
+            $normalizedLoginPath = $this->normalizePath(SITE_URL.'/login');
+            $normalizedLoginPath = $this->normalizePath(SITE_URL.'/login');
+            $normalizedPath = $this->normalizePath($_SERVER['REQUEST_URI']);
+            $normalizedLoginPath = $this->normalizePath(SITE_URL.'/login');
+            $normalizedLoginPath = trim($normalizedLoginPath, '/');
 
-            if ($normalizedPath !== '/login') {
+            if ($this->isLoggedIn() && $normalizedPath === 'login') {
+                header('Location: ' . SITE_URL . '/dashboard');
+                exit;
+            }
+
+            if ($normalizedPath !== $normalizedLoginPath) {
                 header('Location: ' . SITE_URL . '/login');
                 exit();
+            } else {
+                return; // Avoid redirect loop when already on login page
             }
         } elseif (!$this->isRoleAllowed($userRole, $allowedRoles)) {
             http_response_code(403);
