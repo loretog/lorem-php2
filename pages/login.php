@@ -1,8 +1,18 @@
 <?php
+require_once __DIR__.'/../render.php';
+require_once __DIR__.'/../lib/Auth.php';
 
+session_start();
 
+$auth = Auth::get();
 
-$error = null;
+if ($auth->isLoggedIn()) {
+    header('Location: ' . SITE_URL);
+    exit();
+}
+
+$error = $_SESSION['login_error'] ?? null;
+unset($_SESSION['login_error']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';

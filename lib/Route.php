@@ -7,7 +7,7 @@ class Route
     private static $parameters = [];
 
     public static function init()
-    {
+    {        
         $url = trim(filter_input(INPUT_GET, 'url', FILTER_SANITIZE_URL) ?? '', '/');
         $url = $url === '' ? '/' : '/' . $url;
         self::$current_route = $url;
@@ -22,17 +22,17 @@ class Route
     }
 
     public static function current()
-    {
+    {        
         return self::$current_route;
     }
 
     public static function parts()
-    {
+    {        
         return self::$route_parts;
     }
 
     public static function get($index)
-    {
+    {        
         // Check parameters first, then fall back to positional parts
         return self::$parameters[$index] ?? self::$route_parts[$index] ?? null;
     }

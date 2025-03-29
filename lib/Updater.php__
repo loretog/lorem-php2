@@ -1,0 +1,609 @@
+<?php
+class Updater {
+    private $githubToken;
+    private $repoOwner;
+    private $repoName;
+
+    public function __construct() {
+        $this->githubToken = defined('GITHUB_TOKEN') ? GITHUB_TOKEN : '';
+        $this->repoOwner = defined('REPO_OWNER') ? REPO_OWNER : 'your-organization';
+        $this->repoName = defined('REPO_NAME') ? REPO_NAME : 'your-repo';
+    }
+    public function applyUpdate($sourceDir, $updateSources, $backupDir) {
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+
+
+    public function getLatestRelease() {
+        $url = "https://api.github.com/repos/{$this->repoOwner}/{$this->repoName}/releases/assets/{$assetId}";        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}/{$this->repoName}
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}/releases/latest";
+        return $this->makeAuthenticatedRequest($url);
+        public function applyUpdate($sourceDir, $updateSources, $backupDir) {
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}
+
+    public function downloadAsset($assetId, $savePath) {
+        $url = "https://api.github.com/repos/{$this->repoOwner}/{$this->repoName}/releases/assets/{$assetId}";        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}/{$this->repoName}
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}/releases/assets/{$assetId}
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}";
+        $headers = [
+            'Accept: application/octet-stream',
+            'Authorization: token ' . $this->githubToken
+        ];
+
+        return $this->downloadFile($url, $savePath, $headers);
+        public function applyUpdate($sourceDir, $updateSources, $backupDir) {
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}
+
+    private function makeAuthenticatedRequest($url) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: token ' . $this->githubToken,
+            'User-Agent: PHP Updater'
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            throw new Exception("GitHub API request failed: HTTP {$httpCode}");
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}");
+            public function applyUpdate($sourceDir, $updateSources, $backupDir) {
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}
+
+        return json_decode($response, true);
+        public function applyUpdate($sourceDir, $updateSources, $backupDir) {
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}
+
+    private function downloadFile($url, $savePath, $headers = []) {
+        $fp = fopen($savePath, 'w');
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        
+        $result = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        fclose($fp);
+
+        return $httpCode === 200;
+        public function applyUpdate($sourceDir, $updateSources, $backupDir) {
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}
+    public function applyUpdate($sourceDir, $updateSources, $backupDir) {
+        // Create backup directory
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        // Backup and replace files
+        foreach ($updateSources as $src => $dest) {
+            $sourcePath = "$sourceDir/$src";
+            $destPath = "./$dest";
+            $backupPath = "$backupDir/$dest";
+
+            // Backup existing files
+            if (is_dir($destPath)) {
+                $this->copyDir($destPath, $backupPath);
+            }
+
+            // Replace with new files
+            if (is_dir($sourcePath)) {
+                $this->copyDir($sourcePath, $destPath);
+            }
+        }
+    }
+
+    private function copyDir($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file != '.' && $file != '..') {
+                $srcFile = "$src/$file";
+                $dstFile = "$dst/$file";
+
+                if (is_dir($srcFile)) {
+                    $this->copyDir($srcFile, $dstFile);
+                } else {
+                    copy($srcFile, $dstFile);
+                }
+            }
+        }
+        closedir($dir);
+    }
+}

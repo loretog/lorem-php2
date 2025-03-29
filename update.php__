@@ -1,0 +1,76 @@
+<?php
+require_once __DIR__.'/config.php';
+require_once __DIR__.'/lib/Updater.php';
+require_once __DIR__.'/permissions.php';
+
+// Verify admin permissions
+if (!Auth::get()->hasPermission('admin')) {
+  header('HTTP/1.1 403 Forbidden');
+  exit('Access denied');
+}
+
+$updater = new Updater();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_update'])) {
+  try {
+    // Get update info from session
+    $updateInfo = $_SESSION['update_info'];
+    
+    // Find ZIP asset
+    $zipAsset = null;
+    foreach ($updateInfo['assets'] as $asset) {
+      if (preg_match('/\.zip$/i', $asset['name'])) {
+        $zipAsset = $asset;
+        break;
+      }
+    }
+
+    if (!$zipAsset) {
+      throw new Exception('No ZIP asset found in release');
+    }
+
+    // Download ZIP to temp directory
+    $tempDir = sys_get_temp_dir().'/lorem_update_' . time();
+    mkdir($tempDir);
+    $zipPath = $tempDir.'/update.zip';
+    
+    if (!$updater->downloadAsset($zipAsset['id'], $zipPath)) {
+      throw new Exception('Failed to download update package');
+    }
+
+    // Extract ZIP contents
+    $zip = new ZipArchive();
+    if ($zip->open($zipPath) !== TRUE) {
+      throw new Exception('Failed to open update package');
+    }
+    
+    $zip->extractTo($tempDir);
+    $zip->close();
+
+    // Define update targets and backup directory
+    $updateSources = [
+      'lib' => 'lib',
+      'layouts' => 'layouts',
+      'pages' => 'pages'
+    ];
+    
+    $backupDir = 'backups/' . date('Y-m-d_His');
+    
+    // Perform update with rollback support
+    $updater->applyUpdate($tempDir, $updateSources, $backupDir);
+
+    // Cleanup and redirect
+    array_map('unlink', glob("$tempDir/*.*"));
+    rmdir($tempDir);
+    
+    $_SESSION['update_success'] = 'System updated successfully to version ' . $updateInfo['tag_name'];
+    header('Location: admin.php');
+    exit();
+
+  } catch (Exception $e) {
+    $error = 'Update failed: ' . $e->getMessage();
+    $_SESSION['update_error'] = $error;
+    header('Location: admin.php');
+    exit();
+  }
+}

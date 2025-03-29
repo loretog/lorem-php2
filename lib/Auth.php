@@ -77,12 +77,10 @@ class Auth
                 $this->logout();
                 $normalizedPath = $this->normalizePath($_SERVER['REQUEST_URI']);
                 $normalizedLoginPath = $this->normalizePath(SITE_URL.'/login');
+                // Only redirect if not already on login page
                 if ($normalizedPath !== $normalizedLoginPath) {
-                    // Only redirect if not already on login page
-                    if ($normalizedPath !== $normalizedLoginPath) {
-                        header('Location: ' . SITE_URL . '/login');
-                        exit();
-                    }
+                    header('Location: ' . SITE_URL . '/login');
+                    exit();
                 }
             }
         }
@@ -116,6 +114,11 @@ class Auth
         $basePath = parse_url(SITE_URL, PHP_URL_PATH);
         $path = parse_url($url, PHP_URL_PATH);
         return trim(preg_replace('#^'.preg_quote($basePath, '#').'#', '', $path), '/') ?: '/';
+    }
+    
+    private function isLoginPage($normalizedPath)
+    {
+        return strpos($normalizedPath, 'login') !== false;
     }
 
     public function checkAccess($allowedRoles = ['logged_in'])
@@ -151,17 +154,14 @@ class Auth
         if (!$this->isLoggedIn()) {
             $normalizedPath = $this->normalizePath($_SERVER['REQUEST_URI']);
             $normalizedLoginPath = $this->normalizePath(SITE_URL.'/login');
-            $normalizedLoginPath = $this->normalizePath(SITE_URL.'/login');
-            $normalizedPath = $this->normalizePath($_SERVER['REQUEST_URI']);
-            $normalizedLoginPath = $this->normalizePath(SITE_URL.'/login');
             $normalizedLoginPath = trim($normalizedLoginPath, '/');
 
-            if ($this->isLoggedIn() && $normalizedPath === 'login') {
+            if ($this->isLoggedIn() && $this->isLoginPage($normalizedPath)) {
                 header('Location: ' . SITE_URL . '/dashboard');
                 exit;
             }
 
-            if ($normalizedPath !== $normalizedLoginPath) {
+            if (!$this->isLoginPage($normalizedPath)) {
                 header('Location: ' . SITE_URL . '/login');
                 exit();
             } else {

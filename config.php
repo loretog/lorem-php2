@@ -20,4 +20,9 @@
 
     // Role hierarchy (higher roles inherit lower roles' permissions)
     // List of all valid roles in the system
+    define('GITHUB_TOKEN', ''); // Add token in production
+    define('REPO_OWNER', 'your-organization');
+    define('REPO_NAME', 'your-repo');
+
+    // List of all valid roles in the system
     $VALID_ROLES = ['logged_in', 'admin', 'user'];
