@@ -4,7 +4,12 @@ require_once 'lib/Auth.php';
 
 $auth = new Auth();
 
+/* 
+
+ */
 // Restrict admin page to admin role only
+//$auth->checkAccess(['admin']);
+
 
 /**
  * ROLE HIERARCHY CONFIGURATION

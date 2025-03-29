@@ -190,6 +190,11 @@ class Auth
         }
         return false;
     }
+    
+    public function hasRole($role)
+    {
+        return $this->isRoleAllowed($this->getUserRole(), [$role]);
+    }
 
     private function getEffectiveRoles($role)
     {
